@@ -1,0 +1,26 @@
+From 80266c7281ce032c76029c8fbbdeed38c569bab8 Mon Sep 17 00:00:00 2001
+From: Maxim <maximi@stelar.md>
+Date: Thu, 9 Apr 2020 03:12:44 +0300
+Subject: [PATCH] q
+
+---
+ CMakeLists.txt | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index c82fa2b5..46f148c9 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -17,6 +17,9 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
+ set(CMAKE_C_EXTENSIONS ON)
+ set(CMAKE_C_STANDARD 90)
+ 
++set(CMAKE_SYSTEM_NAME Android)
++
++
+ cmake_dependent_option(LIBUV_BUILD_TESTS
+   "Build the unit tests when BUILD_TESTING is enabled and we are the root project" ON
+   "BUILD_TESTING;CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR" OFF)
+-- 
+2.24.0
+
