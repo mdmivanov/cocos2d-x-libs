@@ -1,0 +1,35 @@
+From 08b5cecf05a51922fc21cbe0169a1088a47bc121 Mon Sep 17 00:00:00 2001
+From: Admin <admin@iMac-Admin.local>
+Date: Sun, 12 Apr 2020 01:03:58 -0700
+Subject: [PATCH] fix ANDROID_TOOLCHAIN
+
+---
+ Configurations/15-android.conf | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/Configurations/15-android.conf b/Configurations/15-android.conf
+index 4616394f8c..fa7f2789e1 100644
+--- Configurations/15-android.conf
++++ Configurations/15-android.conf
+@@ -24,7 +24,7 @@
+ 
+             my $ndk_var;
+             my $ndk;
+-            foreach (qw(ANDROID_NDK_HOME ANDROID_NDK)) {
++            foreach (qw(ANDROID_TOOLCHAIN ANDROID_NDK_HOME ANDROID_NDK)) {
+                 $ndk_var = $_;
+                 $ndk = $ENV{$ndk_var};
+                 last if defined $ndk;
+@@ -116,7 +116,8 @@
+                     die "no NDK $triarch-$cc on \$PATH";
+                 }
+                 $user{CC} = $cc;
+-                $user{CROSS_COMPILE} = "$triarch-";
++                $user{CROSS_COMPILE} = undef;
++                #$user{CROSS_COMPILE} = "$triarch-";
+             } elsif ($user{CC} eq "clang") {
+                 die "no NDK clang on \$PATH";
+             } else {
+-- 
+2.24.1 (Apple Git-126)
+

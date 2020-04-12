@@ -1,5 +1,5 @@
 # OPENSSL
-OPENSSL_VERSION := 1.1.0c
+OPENSSL_VERSION := 1.1.1f
 OPENSSL_URL := https://www.openssl.org/source/openssl-$(OPENSSL_VERSION).tar.gz
 
 OPENSSL_EXTRA_CONFIG_1=no-shared no-unit-test
@@ -41,18 +41,21 @@ endif
 endif
 
 ifdef HAVE_ANDROID
-export ANDROID_SYSROOT=$(ANDROID_TOOLCHAIN_PATH)/sysroot
-export SYSROOT=$(ANDROID_SYSROOT)
-export NDK_SYSROOT=$(ANDROID_SYSROOT)
-export ANDROID_NDK_SYSROOT=$(ANDROID_SYSROOT)
-export CROSS_SYSROOT=$(ANDROID_SYSROOT)
+export ANDROID_TOOLCHAIN=$(ANDROID_TOOLCHAIN_PATH)
+#export ANDROID_SYSROOT=$(ANDROID_TOOLCHAIN_PATH)/sysroot
+#export SYSROOT=$(ANDROID_SYSROOT)
+#export NDK_SYSROOT=$(ANDROID_SYSROOT)
+#export ANDROID_NDK_SYSROOT=$(ANDROID_SYSROOT)
+#export CROSS_SYSROOT=$(ANDROID_SYSROOT)
+
 
 ifeq ($(MY_TARGET_ARCH),arm64-v8a)
-OPENSSL_CONFIG_VARS=android64-aarch64
+OPENSSL_CONFIG_VARS=android-arm64
 endif
 
 ifeq ($(MY_TARGET_ARCH),armeabi-v7a)
-OPENSSL_CONFIG_VARS=android-armeabi
+OPENSSL_CONFIG_VARS=android-arm
+OPENSSL_EXTRA_CONFIG_2=-no-integrated-as
 endif
 
 ifeq ($(MY_TARGET_ARCH),armeabi)
@@ -130,15 +133,18 @@ export CROSS_SDK=AppleTV${TVOS_PLATFORM}.sdk
 
 endif
 
-$(TARBALLS)/openssl-$(OPENSSL_VERSION).tar.gz:
-	$(call download,$(OPENSSL_URL))
 
-.sum-openssl: openssl-$(OPENSSL_VERSION).tar.gz
+LIBUV_GITURL := https://github.com/mdmivanov/openssl
 
-openssl: openssl-$(OPENSSL_VERSION).tar.gz .sum-openssl
+$(TARBALLS)/openssl-git.tar.xz:
+	$(call download_git,$(LIBUV_GITURL),OpenSSL_1_1_1-stable,08b5cecf05a51922fc21cbe0169a1088a47bc121)
+
+.sum-openssl: openssl-git.tar.xz
+
+openssl: openssl-git.tar.xz
 	$(UNPACK)
 ifdef HAVE_ANDROID
-	$(APPLY) $(SRC)/openssl/android-clang.patch
+	#$(APPLY) $(SRC)/openssl/android-fix.patch
 endif
 ifdef HAVE_IOS
 	$(APPLY) $(SRC)/openssl/ios-armv7-crash.patch
