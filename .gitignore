@@ -58,3 +58,4 @@
 **/tarballs
 /build/android-toolchain*
 /contrib/android-*
+.DS_Store
