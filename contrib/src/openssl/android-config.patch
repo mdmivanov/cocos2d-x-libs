@@ -9,8 +9,8 @@ Subject: [PATCH] fix ANDROID_TOOLCHAIN
 
 diff --git a/Configurations/15-android.conf b/Configurations/15-android.conf
 index 4616394f8c..fa7f2789e1 100644
---- Configurations/15-android.conf
-+++ Configurations/15-android.conf
+--- a/Configurations/15-android.conf
++++ b/Configurations/15-android.conf
 @@ -24,7 +24,7 @@
  
              my $ndk_var;
@@ -31,5 +31,5 @@ index 4616394f8c..fa7f2789e1 100644
                  die "no NDK clang on \$PATH";
              } else {
 -- 
-2.24.1 (Apple Git-126)
+2.24.0
 

@@ -1,7 +1,4 @@
 # OPENSSL
-OPENSSL_VERSION := 1.1.1f
-OPENSSL_URL := https://www.openssl.org/source/openssl-$(OPENSSL_VERSION).tar.gz
-
 OPENSSL_EXTRA_CONFIG_1=no-shared no-unit-test
 OPENSSL_EXTRA_CONFIG_2=
 
@@ -17,37 +14,9 @@ OPENSSL_ARCH=-m32
 endif
 endif
 
-ifdef HAVE_LINUX
-ifeq ($(MY_TARGET_ARCH),x86_64)
-OPENSSL_CONFIG_VARS=linux-x86_64
-OPENSSL_ARCH=-m64
-endif
-
-ifeq ($(MY_TARGET_ARCH),i386)
-OPENSSL_CONFIG_VARS=linux-elf
-OPENSSL_ARCH=-m32
-endif
-endif
-
-ifdef HAVE_TIZEN
-ifeq ($(MY_TARGET_ARCH),x86)
-OPENSSL_CONFIG_VARS=linux-elf
-OPENSSL_ARCH=-m32
-OPENSSL_EXTRA_CONFIG_2=no-async
-endif
-ifeq ($(MY_TARGET_ARCH),armv7)
-OPENSSL_CONFIG_VARS=linux-generic32
-endif
-endif
 
 ifdef HAVE_ANDROID
 export ANDROID_TOOLCHAIN=$(ANDROID_TOOLCHAIN_PATH)
-#export ANDROID_SYSROOT=$(ANDROID_TOOLCHAIN_PATH)/sysroot
-#export SYSROOT=$(ANDROID_SYSROOT)
-#export NDK_SYSROOT=$(ANDROID_SYSROOT)
-#export ANDROID_NDK_SYSROOT=$(ANDROID_SYSROOT)
-#export CROSS_SYSROOT=$(ANDROID_SYSROOT)
-
 
 ifeq ($(MY_TARGET_ARCH),arm64-v8a)
 OPENSSL_CONFIG_VARS=android-arm64
@@ -69,6 +38,8 @@ endif
 
 ifdef HAVE_IOS
 
+
+
 ifeq ($(MY_TARGET_ARCH),armv7)
 IOS_PLATFORM=OS
 OPENSSL_CONFIG_VARS=ios-cross
@@ -80,6 +51,7 @@ IOS_PLATFORM=OS
 OPENSSL_CONFIG_VARS=ios64-cross
 OPENSSL_EXTRA_CONFIG_2=no-async
 endif
+
 ifeq ($(MY_TARGET_ARCH),armv7s)
 IOS_PLATFORM=OS
 OPENSSL_CONFIG_VARS=ios-cross
@@ -100,54 +72,26 @@ endif
 
 CUR_MAKEFILE_DIR:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 
-# Set reference to custom configuration (OpenSSL 1.1.0)
-# See: https://github.com/openssl/openssl/commit/afce395cba521e395e6eecdaf9589105f61e4411
-export OPENSSL_LOCAL_CONFIG_DIR=${CUR_MAKEFILE_DIR}/config
-
 export CROSS_TOP=$(shell xcode-select -print-path)/Platforms/iPhone${IOS_PLATFORM}.platform/Developer
 export CROSS_SDK=iPhone${IOS_PLATFORM}.sdk
+export IOS_MIN_SDK_VERSION=8.0
 
 endif
 
-ifdef HAVE_TVOS
-
-ifeq ($(MY_TARGET_ARCH),arm64)
-TVOS_PLATFORM=OS
-OPENSSL_CONFIG_VARS=tvos64-cross-arm64
-OPENSSL_EXTRA_CONFIG_2=no-async
-endif
-ifeq ($(MY_TARGET_ARCH),x86_64)
-TVOS_PLATFORM=Simulator
-OPENSSL_CONFIG_VARS=tvos-sim-cross-x86_64
-OPENSSL_EXTRA_CONFIG_2=no-async
-endif
-
-CUR_MAKEFILE_DIR:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
-
-# Set reference to custom configuration (OpenSSL 1.1.0)
-# See: https://github.com/openssl/openssl/commit/afce395cba521e395e6eecdaf9589105f61e4411
-export OPENSSL_LOCAL_CONFIG_DIR=${CUR_MAKEFILE_DIR}/config
-
-export CROSS_TOP=$(shell xcode-select -print-path)/Platforms/AppleTV${TVOS_PLATFORM}.platform/Developer
-export CROSS_SDK=AppleTV${TVOS_PLATFORM}.sdk
-
-endif
-
-
-LIBUV_GITURL := https://github.com/mdmivanov/openssl
+LIBOPENSSL_GITURL := https://github.com/openssl/openssl
 
 $(TARBALLS)/openssl-git.tar.xz:
-	$(call download_git,$(LIBUV_GITURL),OpenSSL_1_1_1-stable,08b5cecf05a51922fc21cbe0169a1088a47bc121)
+	$(call download_git,$(LIBOPENSSL_GITURL), OpenSSL_1_1_1-stable, 36eadf1f84daa965041cce410b4ff32cbda4ef08)
 
 .sum-openssl: openssl-git.tar.xz
 
 openssl: openssl-git.tar.xz
 	$(UNPACK)
 ifdef HAVE_ANDROID
-	#$(APPLY) $(SRC)/openssl/android-fix.patch
+	$(APPLY) $(SRC)/openssl/android-config.patch
 endif
 ifdef HAVE_IOS
-	$(APPLY) $(SRC)/openssl/ios-armv7-crash.patch
+	$(APPLY) $(SRC)/openssl/ios-config.patch
 endif
 	$(MOVE)
 
@@ -156,16 +100,6 @@ endif
 ifdef HAVE_IOS
 	cd $< && perl -i -pe "s|^CFLAGS=(.*) -DNDEBUG (.*)-O3|CFLAGS=\\1 \\2 ${OPTIM} ${ENABLE_BITCODE}|g" Makefile
 	cd $< && perl -i -pe "s|^CFLAGS_Q=(.*) -DNDEBUG (.*)|CFLAGS_Q=\\1 \\2 ${OPTIM} ${ENABLE_BITCODE}|g" Makefile
-endif
-ifdef HAVE_TVOS
-	cd $< && perl -i -pe "s|^CFLAGS=(.*) -DNDEBUG (.*)-O3|CFLAGS=\\1 \\2 ${OPTIM} ${ENABLE_BITCODE}|g" Makefile
-	cd $< && perl -i -pe "s|^CFLAGS_Q=(.*) -DNDEBUG (.*)|CFLAGS_Q=\\1 \\2 ${OPTIM} ${ENABLE_BITCODE}|g" Makefile
-endif
-ifdef HAVE_LINUX
-ifndef HAVE_ANDROID
-	cd $< && perl -i -pe "s|^CFLAGS=(.*) -DNDEBUG (.*)-O3|CFLAGS=\\1 \\2 ${EXTRA_CFLAGS} ${OPTIM}|g" Makefile
-	cd $< && perl -i -pe "s|^CFLAGS_Q=(.*) -DNDEBUG (.*)|CFLAGS_Q=\\1 \\2 ${EXTRA_CFLAGS} ${OPTIM}|g" Makefile
-endif
 endif
 ifdef HAVE_MACOSX
 	cd $< && perl -i -pe "s|^CFLAGS=(.*) -DNDEBUG (.*)-O3|CFLAGS=\\1 \\2 ${OPTIM}|g" Makefile
