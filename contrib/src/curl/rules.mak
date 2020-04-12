@@ -1,6 +1,6 @@
 # curl
 
-CURL_VERSION := 7.52.1
+CURL_VERSION := 7.69.1
 CURL_URL :=  http://curl.haxx.se/download/curl-$(CURL_VERSION).tar.gz
 
 $(TARBALLS)/curl-$(CURL_VERSION).tar.gz:
@@ -8,7 +8,7 @@ $(TARBALLS)/curl-$(CURL_VERSION).tar.gz:
 
 .sum-curl: curl-$(CURL_VERSION).tar.gz
 
-curl: curl-$(CURL_VERSION).tar.gz .sum-curl
+curl: curl-$(CURL_VERSION).tar.gz
 	$(UNPACK)
 	$(UPDATE_AUTOCONFIG)
 	$(MOVE)
