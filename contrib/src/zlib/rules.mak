@@ -1,5 +1,5 @@
 # ZLIB
-ZLIB_VERSION := 1.2.8
+ZLIB_VERSION := 1.2.11
 ZLIB_URL := http://zlib.net/fossils/zlib-$(ZLIB_VERSION).tar.gz
 
 
@@ -26,7 +26,7 @@ $(TARBALLS)/zlib-$(ZLIB_VERSION).tar.gz:
 
 .sum-zlib: zlib-$(ZLIB_VERSION).tar.gz
 
-zlib: zlib-$(ZLIB_VERSION).tar.gz .sum-zlib
+zlib: zlib-$(ZLIB_VERSION).tar.gz
 	$(UNPACK)
 	$(MOVE)
 
