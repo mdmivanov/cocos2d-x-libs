@@ -3,7 +3,7 @@
 LIBUV_GITURL := https://github.com/libuv/libuv
 #version 1.35.0 (stable)
 $(TARBALLS)/libuv-git.tar.xz:
-	$(call download_git,$(LIBUV_GITURL),v1.x,e45f1ec38db882f8dc17b51f51a6684027034609)
+	$(call download_git,$(LIBUV_GITURL),v1.x,dc7c874660526e4ed70c7c7579b974283c9ad6e0)
 
 
 uv: libuv-git.tar.xz 
