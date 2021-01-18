@@ -81,7 +81,7 @@ endif
 LIBOPENSSL_GITURL := https://github.com/openssl/openssl
 
 $(TARBALLS)/openssl-git.tar.xz:
-	$(call download_git,$(LIBOPENSSL_GITURL), OpenSSL_1_1_1-stable, 36eadf1f84daa965041cce410b4ff32cbda4ef08)
+	$(call download_git,$(LIBOPENSSL_GITURL), OpenSSL_1_1_1-stable, 76ed0c0ad119569f6e6f6c96b27b76d3b110413b)
 
 .sum-openssl: openssl-git.tar.xz
 
