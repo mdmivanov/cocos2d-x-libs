@@ -74,14 +74,14 @@ CUR_MAKEFILE_DIR:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 
 export CROSS_TOP=$(shell xcode-select -print-path)/Platforms/iPhone${IOS_PLATFORM}.platform/Developer
 export CROSS_SDK=iPhone${IOS_PLATFORM}.sdk
-export IOS_MIN_SDK_VERSION=8.0
+export IOS_MIN_SDK_VERSION=12.0
 
 endif
 
 LIBOPENSSL_GITURL := https://github.com/openssl/openssl
 
 $(TARBALLS)/openssl-git.tar.xz:
-	$(call download_git,$(LIBOPENSSL_GITURL), OpenSSL_1_1_1-stable, 76ed0c0ad119569f6e6f6c96b27b76d3b110413b)
+	$(call download_git,$(LIBOPENSSL_GITURL), OpenSSL_1_1_1-stable, 90cebd1b216e0a160fcfd8e0eddca47dad47c183)
 
 .sum-openssl: openssl-git.tar.xz
 
